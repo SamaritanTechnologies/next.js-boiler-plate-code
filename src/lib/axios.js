@@ -5,12 +5,11 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 let onUnauthorized = null;
 
-/** Register a callback (e.g. dispatch logout) for 401 responses. */
 export function setUnauthorizedHandler(handler) {
   onUnauthorized = handler;
 }
 
-/** Public API client — no auth headers attached. */
+// Public requests (login, register, etc.)
 export const api = axios.create({
   baseURL,
   headers: {
@@ -18,11 +17,7 @@ export const api = axios.create({
   },
 });
 
-/**
- * Authenticated API client.
- * Reads the access token from cookies and attaches it as a Bearer header.
- * Also sends cookies via `withCredentials`.
- */
+// Authenticated requests — attaches Bearer token from cookies
 export const axiosWithCredentials = axios.create({
   baseURL,
   withCredentials: true,
