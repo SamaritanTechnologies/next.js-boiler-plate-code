@@ -1,21 +1,21 @@
 import { axiosWithCredentials } from "@/lib/axios";
 
-export const getUsers = async (params) => {
-  const { data } = await axiosWithCredentials.get("/users", { params });
-  return data;
+export const getUsers = async (data) => {
+  const response = await axiosWithCredentials.get("/users", { params: data });
+  return response.data;
 };
 
 export const getUserData = async (id) => {
-  const { data } = await axiosWithCredentials.get(`/users/${id}`);
-  return data;
+  const response = await axiosWithCredentials.get(`/users/${id}`);
+  return response.data;
 };
 
-export const updateUser = async (id, payload) => {
-  const { data } = await axiosWithCredentials.patch(`/users/${id}`, payload);
-  return data;
+export const updateUser = async (id, data) => {
+  const response = await axiosWithCredentials.patch(`/users/${id}`, { data });
+  return response.data;
 };
 
 export const deleteUser = async (id) => {
-  const { data } = await axiosWithCredentials.delete(`/users/${id}`);
-  return data;
+  const response = await axiosWithCredentials.delete(`/users/${id}`);
+  return response.data;
 };
