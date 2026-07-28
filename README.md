@@ -1,155 +1,66 @@
 # Next.js Boilerplate
 
-A ready-to-use [Next.js](https://nextjs.org) App Router starter with Redux Toolkit, Sonner toasts, Axios, and common utilities.
+Next.js App Router starter with Redux Toolkit, Sonner, Axios, and common utilities.
 
-## Stack
+## Requirements
 
-| Package | Purpose |
-| --- | --- |
-| Next.js 16 + React 19 | App Router, React Compiler |
-| Tailwind CSS 4 | Styling |
-| Redux Toolkit + React Redux | Global state |
-| Sonner | Toast notifications |
-| Axios | HTTP client |
-| clsx + tailwind-merge | `cn()` class helper |
-| Lucide React | Icons |
-| Biome | Lint & format |
+- Node.js 18+
+- npm
 
-## Getting Started
+### Included packages
 
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
+- Next.js 16 + React 19
+- Tailwind CSS 4
+- Redux Toolkit + React Redux
+- Sonner (toasts)
+- Axios
+- clsx + tailwind-merge (`cn` helper)
+- Lucide React (icons)
+- Biome (lint & format)
 
-Open [http://localhost:3000](http://localhost:3000).
+## Setup
+
+1. `npm install`
+2. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_API_URL`
+3. `npm run dev` → [http://localhost:3000](http://localhost:3000)
 
 ### Scripts
 
-```bash
-npm run dev      # development server
-npm run build    # production build
-npm run start    # start production server
-npm run lint     # biome check
-npm run format   # biome format
-```
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Biome check |
+| `npm run format` | Biome format |
 
-### Environment
+## How to use
 
-Copy `.env.example` to `.env.local` and set:
+### Auth & cookies
 
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-```
+- `setCredentials({ user, token })` — saves token/user to cookies and Redux
+- `logout()` — clears cookies and Redux auth state
+- Auth is restored from cookies on app load via `hydrateAuth`
 
-## Project Structure
+### API clients (`src/lib/axios.js`)
 
-```
-src/
-├── app/                    # App Router pages & layouts
-├── providers/
-│   ├── Providers.js        # Redux + Sonner wrapper
-│   └── StoreProvider.js
-├── store/
-│   ├── index.js            # configureStore
-│   ├── hooks.js            # useAppDispatch / useAppSelector
-│   └── slices/
-│       ├── authSlice.js
-│       └── uiSlice.js
-├── services/
-│   ├── index.js            # barrel exports
-│   ├── auth.service.js
-│   └── user.service.js
-└── lib/
-    ├── axios.js            # api + axiosWithCredentials
-    ├── auth-cookies.js     # auth token cookie helpers
-    ├── cookies.js          # generic cookie get/set/remove
-    └── utils.js            # cn() helper
-```
+- `api` — public requests (login, register)
+- `axiosWithCredentials` — protected requests; reads `access_token` from cookies and sends `Authorization: Bearer <token>`
+- On `401`, cookies are cleared and Redux logout runs
 
-## Usage
+### Services (`src/services/`)
 
-### Toasts (Sonner)
+- Put API functions in service files (e.g. `auth.service.js`, `user.service.js`)
+- Re-export from `src/services/index.js`
+- Import from `@/services` (e.g. `login`, `getMe`, `getUserData`)
 
-```js
-import { toast } from "sonner";
+### State (`src/store/`)
 
-toast.success("Saved!");
-toast.error("Something went wrong");
-```
+- Use `useAppDispatch` / `useAppSelector` from `@/store/hooks`
+- Add slices under `src/store/slices/` and register them in `src/store/index.js`
 
-### Redux Toolkit
+### Utilities
 
-```js
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setCredentials, logout } from "@/store/slices/authSlice";
-import { toggleSidebar } from "@/store/slices/uiSlice";
-
-const user = useAppSelector((state) => state.auth.user);
-const dispatch = useAppDispatch();
-
-// Saves token (+ optional user) to cookies and Redux
-dispatch(setCredentials({ user, token }));
-
-// Clears cookies and Redux auth state
-dispatch(logout());
-
-dispatch(toggleSidebar());
-```
-
-Auth is hydrated from cookies on app load via `hydrateAuth`.
-
-Add new slices under `src/store/slices/` and register them in `src/store/index.js`.
-
-### Axios
-
-Use `api` for public endpoints (login, register). Use `axiosWithCredentials` for protected routes — it reads `access_token` from cookies and sends `Authorization: Bearer <token>`.
-
-```js
-import { api, axiosWithCredentials } from "@/lib/axios";
-
-// Public — no auth header
-await api.post("/login", { email, password });
-
-// Authenticated — token from cookie + withCredentials
-const { data } = await axiosWithCredentials.get("/me");
-await axiosWithCredentials.post("/posts", payload);
-```
-
-### Services
-
-API calls live in `src/services/`. Import from the barrel:
-
-```js
-import { login, getMe, getUserData, getUsers } from "@/services";
-
-const data = await login({ email, password });
-const me = await getMe();
-const user = await getUserData(id);
-```
-
-Add a new file (e.g. `post.service.js`), then re-export it from `src/services/index.js`.
-
-### Class names
-
-```js
-import { cn } from "@/lib/utils";
-
-<div className={cn("base-class", isActive && "active-class")} />
-```
-
-### Icons
-
-```js
-import { Menu, X } from "lucide-react";
-
-<Menu className="size-5" />
-```
-
-## Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Redux Toolkit](https://redux-toolkit.js.org/)
-- [Sonner](https://sonner.emilkowal.ski/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
+- Toasts: `toast` from `sonner`
+- Class names: `cn` from `@/lib/utils`
+- Icons: from `lucide-react`
