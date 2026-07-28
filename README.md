@@ -57,6 +57,10 @@ src/
 │   └── slices/
 │       ├── authSlice.js
 │       └── uiSlice.js
+├── services/
+│   ├── index.js            # barrel exports
+│   ├── auth.service.js
+│   └── user.service.js
 └── lib/
     ├── axios.js            # api + axiosWithCredentials
     ├── auth-cookies.js     # auth token cookie helpers
@@ -112,6 +116,20 @@ await api.post("/login", { email, password });
 const { data } = await axiosWithCredentials.get("/me");
 await axiosWithCredentials.post("/posts", payload);
 ```
+
+### Services
+
+API calls live in `src/services/`. Import from the barrel:
+
+```js
+import { login, getMe, getUserData, getUsers } from "@/services";
+
+const data = await login({ email, password });
+const me = await getMe();
+const user = await getUserData(id);
+```
+
+Add a new file (e.g. `post.service.js`), then re-export it from `src/services/index.js`.
 
 ### Class names
 
